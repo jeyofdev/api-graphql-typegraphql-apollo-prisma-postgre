@@ -1,0 +1,30 @@
+{
+  "name": "api-graphql-typegraphql-apollo-prisma",
+  "version": "1.0.0",
+  "description": "Create a basic API with graphQl, type-graphql, apollo and prisma",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeyofdev/api-graphql-typegraphql-apollo-prisma-postgre.git"
+  },
+  "keywords": [
+    "javascript",
+    "js",
+    "nodejs",
+    "node",
+    "graphql",
+    "apollo",
+    "apollo-server",
+    "prisma",
+    "postgre"
+  ],
+  "author": "jeyofdev <jgregoire.pro@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeyofdev/api-graphql-typegraphql-apollo-prisma-postgre/issues"
+  },
+  "homepage": "https://github.com/jeyofdev/api-graphql-typegraphql-apollo-prisma-postgre#readme"
+}
