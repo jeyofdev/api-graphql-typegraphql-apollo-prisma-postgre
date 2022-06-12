@@ -11,7 +11,11 @@ class GenreResolver {
         description: 'Get all Genres',
     })
     async Genres(@Ctx() ctx: { prisma: any }) {
-        return ctx?.prisma?.genre?.findMany();
+        return ctx?.prisma?.genre?.findMany({
+            include: {
+                movies: true,
+            },
+        });
     }
 
     @Query(() => Genre, {
@@ -24,6 +28,9 @@ class GenreResolver {
     ) {
         return ctx?.prisma?.genre?.findUnique({
             where: { id },
+            include: {
+                movies: true,
+            },
         });
     }
 
@@ -36,7 +43,12 @@ class GenreResolver {
         @Ctx() ctx: { prisma: any }
     ) {
         const newGenre = await ctx?.prisma?.genre?.create({
-            data: { name },
+            data: {
+                name,
+            },
+            include: {
+                movies: true,
+            },
         });
 
         return newGenre;

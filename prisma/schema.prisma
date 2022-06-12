@@ -14,12 +14,15 @@ model Movie {
   year      Int      @db.Integer
   duration  Int      @db.Integer
   rating    Float    @db.DoublePrecision
+  actors    Actor[]
+  genres    Genre[]
 }
 
 model Actor {
   id        String   @id @unique @default(uuid()) @db.Uuid
   firstname String   @db.VarChar(100)
   lastname  String   @db.VarChar(100)
+  movies    Movie[]
 }
 
 model Director {
@@ -31,4 +34,5 @@ model Director {
 model Genre {
   id        String   @id @unique @default(uuid()) @db.Uuid
   name      String   @db.VarChar(100)
+  movies    Movie[]
 }

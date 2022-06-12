@@ -25,6 +25,12 @@ class UpdateMovieInput {
 
     @Field(() => Float, { description: 'Rating of the movie', nullable: true })
     rating?: number;
+
+    @Field(() => [ID], { nullable: true })
+    actorIds?: string[];
+
+    @Field(() => [ID], { nullable: true })
+    genreIds?: string[];
 }
 
 export default UpdateMovieInput;

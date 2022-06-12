@@ -11,7 +11,11 @@ class ActorResolver {
         description: 'Get all actors',
     })
     async actors(@Ctx() ctx: { prisma: any }) {
-        return ctx?.prisma?.actor?.findMany();
+        return ctx?.prisma?.actor?.findMany({
+            include: {
+                movies: true,
+            },
+        });
     }
 
     @Query(() => Actor, {
@@ -24,6 +28,9 @@ class ActorResolver {
     ) {
         return ctx?.prisma?.actor?.findUnique({
             where: { id },
+            include: {
+                movies: true,
+            },
         });
     }
 
@@ -39,6 +46,9 @@ class ActorResolver {
             data: {
                 firstname,
                 lastname,
+            },
+            include: {
+                movies: true,
             },
         });
 
@@ -56,6 +66,9 @@ class ActorResolver {
                 firstname,
                 lastname,
             },
+            include: {
+                movies: true,
+            },
         });
         return commentUpdated;
     }
@@ -69,7 +82,12 @@ class ActorResolver {
         @Ctx() ctx: { prisma: any }
     ) {
         const currentDocument = ctx?.prisma?.actor?.delete({
-            where: { id },
+            where: {
+                id,
+                include: {
+                    movies: true,
+                },
+            },
         });
         return currentDocument;
     }

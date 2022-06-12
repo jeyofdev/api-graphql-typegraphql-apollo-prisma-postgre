@@ -11,7 +11,12 @@ class MovieResolver {
         description: 'Get all movies',
     })
     async movies(@Ctx() ctx: { prisma: any }) {
-        return ctx?.prisma?.movie?.findMany();
+        return ctx?.prisma?.movie?.findMany({
+            include: {
+                actors: true,
+                genres: true,
+            },
+        });
     }
 
     @Query(() => Movie, {
@@ -24,6 +29,10 @@ class MovieResolver {
     ) {
         return ctx?.prisma?.movie?.findUnique({
             where: { id },
+            include: {
+                actors: true,
+                genres: true,
+            },
         });
     }
 
@@ -32,9 +41,26 @@ class MovieResolver {
         description: 'Add new movie',
     })
     async addMovie(
-        @Args() { title, synopsys, year, duration, rating }: AddMovieInput,
+        @Args()
+        {
+            title,
+            synopsys,
+            year,
+            duration,
+            rating,
+            genreIds,
+            actorIds,
+        }: AddMovieInput,
         @Ctx() ctx: { prisma: any }
     ) {
+        const genresList: { id: string }[] = genreIds
+            ? genreIds?.map((id) => ({ id }))
+            : [];
+
+        const actorsList: { id: string }[] = actorIds
+            ? actorIds.map((id) => ({ id }))
+            : [];
+
         const newMovie = await ctx?.prisma?.movie?.create({
             data: {
                 title,
@@ -42,6 +68,16 @@ class MovieResolver {
                 year,
                 duration,
                 rating,
+                genres: {
+                    connect: genresList,
+                },
+                actors: {
+                    connect: actorsList,
+                },
+            },
+            include: {
+                actors: true,
+                genres: true,
             },
         });
 
@@ -51,10 +87,27 @@ class MovieResolver {
     @Mutation(() => Movie)
     async updateMovie(
         @Args()
-        { id, title, synopsys, year, duration, rating }: UpdateMovieInput,
+        {
+            id,
+            title,
+            synopsys,
+            year,
+            duration,
+            rating,
+            genreIds,
+            actorIds,
+        }: UpdateMovieInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const commentUpdated = ctx?.prisma?.movie?.update({
+        const genresList: { id: string }[] = genreIds
+            ? genreIds?.map((genreId) => ({ id: genreId }))
+            : [];
+
+        const actorsList: { id: string }[] = actorIds
+            ? actorIds.map((actorId) => ({ id: actorId }))
+            : [];
+
+        const movieUpdated = ctx?.prisma?.movie?.update({
             where: { id },
             data: {
                 title,
@@ -62,9 +115,19 @@ class MovieResolver {
                 year,
                 duration,
                 rating,
+                genres: {
+                    connect: genresList,
+                },
+                actors: {
+                    connect: actorsList,
+                },
+            },
+            include: {
+                actors: true,
+                genres: true,
             },
         });
-        return commentUpdated;
+        return movieUpdated;
     }
 
     @Mutation(() => Movie, {
@@ -75,10 +138,14 @@ class MovieResolver {
         @Args() { id }: MovieByIdInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const currentDocument = ctx?.prisma?.movie?.delete({
+        const currentMovie = ctx?.prisma?.movie?.delete({
             where: { id },
+            include: {
+                actors: true,
+                genres: true,
+            },
         });
-        return currentDocument;
+        return currentMovie;
     }
 }
 
