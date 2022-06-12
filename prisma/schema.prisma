@@ -13,4 +13,22 @@ model Movie {
   synopsys  String   @db.Text
   year      Int      @db.Integer
   duration  Int      @db.Integer
+  rating    Float    @db.DoublePrecision
+}
+
+model Actor {
+  id        String   @id @unique @default(uuid()) @db.Uuid
+  firstname String   @db.VarChar(100)
+  lastname  String   @db.VarChar(100)
+}
+
+model Director {
+  id        String   @id @unique @default(uuid()) @db.Uuid
+  firstname String   @db.VarChar(100)
+  lastname  String   @db.VarChar(100)
+}
+
+model Genre {
+  id        String   @id @unique @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(100)
 }
