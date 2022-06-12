@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from 'type-graphql';
+import { Field, Float, ID, Int, ObjectType } from 'type-graphql';
 
 @ObjectType({ description: 'Model for the movies' })
 class Movie {
@@ -16,6 +16,9 @@ class Movie {
 
     @Field(() => Int, { description: 'Duration of the movie' })
     duration!: number;
+
+    @Field(() => Float, { description: 'Rating of the movie' })
+    rating!: number;
 }
 
 export default Movie;

@@ -1,8 +1,8 @@
 import { Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import Movie from '../models/Movie.model';
-import AddMovieInput from '../inputs/movie/AddMovieInput';
-import MovieByIdInput from '../inputs/movie/MovieByIdInput';
-import UpdateMovieInput from '../inputs/movie/UpdateMovieInput';
+import AddMovieInput from '../inputs/movie/AddMovie.Input';
+import MovieByIdInput from '../inputs/movie/MovieById.Input';
+import UpdateMovieInput from '../inputs/movie/UpdateMovie.Input';
 
 @Resolver(Movie)
 class MovieResolver {
@@ -32,7 +32,7 @@ class MovieResolver {
         description: 'Add new movie',
     })
     async addMovie(
-        @Args() { title, synopsys, year, duration }: AddMovieInput,
+        @Args() { title, synopsys, year, duration, rating }: AddMovieInput,
         @Ctx() ctx: { prisma: any }
     ) {
         const newMovie = await ctx?.prisma?.movie?.create({
@@ -41,6 +41,7 @@ class MovieResolver {
                 synopsys,
                 year,
                 duration,
+                rating,
             },
         });
 
@@ -49,7 +50,8 @@ class MovieResolver {
 
     @Mutation(() => Movie)
     async updateMovie(
-        @Args() { id, title, synopsys, year, duration }: UpdateMovieInput,
+        @Args()
+        { id, title, synopsys, year, duration, rating }: UpdateMovieInput,
         @Ctx() ctx: { prisma: any }
     ) {
         const commentUpdated = ctx?.prisma?.movie?.update({
@@ -59,6 +61,7 @@ class MovieResolver {
                 synopsys,
                 year,
                 duration,
+                rating,
             },
         });
         return commentUpdated;

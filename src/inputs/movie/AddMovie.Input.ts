@@ -1,4 +1,4 @@
-import { ArgsType, Field, Int } from 'type-graphql';
+import { ArgsType, Field, Float, Int } from 'type-graphql';
 
 @ArgsType()
 class AddMovieInput {
@@ -13,6 +13,9 @@ class AddMovieInput {
 
     @Field(() => Int, { description: 'Duration of the movie' })
     duration!: number;
+
+    @Field(() => Float, { description: 'Rating of the movie' })
+    rating!: number;
 }
 
 export default AddMovieInput;
