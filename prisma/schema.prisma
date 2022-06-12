@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Movie {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @unique @default(uuid()) @db.Uuid
   title     String   @db.VarChar(255)
   synopsys  String   @db.Text
   year      Int      @db.Integer

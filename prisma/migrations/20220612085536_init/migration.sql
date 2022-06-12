@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Movie" (
-    "id" SERIAL NOT NULL,
+    "id" UUID NOT NULL,
     "title" VARCHAR(255) NOT NULL,
     "synopsys" TEXT NOT NULL,
     "year" INTEGER NOT NULL,
@@ -8,3 +8,6 @@ CREATE TABLE "Movie" (
 
     CONSTRAINT "Movie_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Movie_id_key" ON "Movie"("id");

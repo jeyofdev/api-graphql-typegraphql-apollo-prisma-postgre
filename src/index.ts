@@ -1,30 +1,16 @@
-import { ApolloServer, gql } from 'apollo-server-express';
+import 'reflect-metadata';
+import { PrismaClient } from '@prisma/client';
+import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import { buildSchemaSync } from 'type-graphql';
 import * as Express from 'express';
 import { createServer } from 'http';
 import * as dotenv from 'dotenv';
-import moviesDatas from './datas';
 
 dotenv.config();
 
-// Schema
-const schema = gql`
-    type Movie {
-        title: String
-        year: Int
-    }
-
-    type Query {
-        movie: [Movie]
-    }
-`;
-
-// resolvers
-const resolvers = {
-    Query: {
-        movie: () => moviesDatas,
-    },
-};
+// prisma client
+const prisma = new PrismaClient();
 
 const { PORT } = process.env;
 
@@ -33,13 +19,16 @@ const LaunchServer = async () => {
     const app = Express();
     const httpServer = createServer(app);
 
+    const schema = buildSchemaSync({
+        resolvers: [`${__dirname}/**/*.resolver.{ts,js}`],
+    });
+
     // Init apollo server
     const server = new ApolloServer({
-        typeDefs: schema,
-        resolvers,
+        schema,
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
         csrfPrevention: true,
-        context: () => ({ movies: moviesDatas }),
+        context: () => ({ prisma }),
     });
 
     await server.start();
@@ -50,11 +39,9 @@ const LaunchServer = async () => {
         httpServer.listen({ port: PORT }, resolve);
     });
 
-    return `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`;
+    console.log(
+        `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+    );
 };
 
-LaunchServer().then((response) => {
-    console.log(response);
-}).catch(() => {
-  throw new Error('Something bad happened...');
-});
+LaunchServer();
