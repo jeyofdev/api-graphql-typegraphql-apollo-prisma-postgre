@@ -53,10 +53,8 @@ const LaunchServer = async () => {
     return `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`;
 };
 
-LaunchServer()
-    .then((response) => {
-        console.log(response);
-    })
-    .catch(() => {
-        throw new Error('Something bad happened...');
-    });
+LaunchServer().then((response) => {
+    console.log(response);
+}).catch(() => {
+  throw new Error('Something bad happened...');
+});
