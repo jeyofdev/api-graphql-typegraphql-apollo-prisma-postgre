@@ -1,21 +1,22 @@
 import { Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Service } from 'typedi';
+import GenreService from '../services/Genre.service';
 import Genre from '../models/Genre.model';
 import AddGenreInput from '../inputs/Genre/AddGenre.Input';
 import GenreByIdInput from '../inputs/Genre/GenreById.Input';
 import UpdateGenreInput from '../inputs/Genre/UpdateGenre.Input';
 
+@Service()
 @Resolver(Genre)
 class GenreResolver {
+    constructor(private readonly genreService: GenreService) {}
+
     @Query(() => [Genre], {
         nullable: true,
         description: 'Get all Genres',
     })
     async Genres(@Ctx() ctx: { prisma: any }) {
-        return ctx?.prisma?.genre?.findMany({
-            include: {
-                movies: true,
-            },
-        });
+        return this?.genreService?.findAllGenres(ctx);
     }
 
     @Query(() => Genre, {
@@ -26,12 +27,7 @@ class GenreResolver {
         @Args() { id }: GenreByIdInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        return ctx?.prisma?.genre?.findUnique({
-            where: { id },
-            include: {
-                movies: true,
-            },
-        });
+        return this?.genreService?.findOneById(ctx, id);
     }
 
     @Mutation(() => Genre, {
@@ -42,16 +38,7 @@ class GenreResolver {
         @Args() { name }: AddGenreInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const newGenre = await ctx?.prisma?.genre?.create({
-            data: {
-                name,
-            },
-            include: {
-                movies: true,
-            },
-        });
-
-        return newGenre;
+        return this?.genreService?.save(ctx, name);
     }
 
     @Mutation(() => Genre)
@@ -59,11 +46,7 @@ class GenreResolver {
         @Args() { id, name }: UpdateGenreInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const commentUpdated = ctx?.prisma?.genre?.update({
-            where: { id },
-            data: { name },
-        });
-        return commentUpdated;
+        return this?.genreService?.updateOne(ctx, id, name);
     }
 
     @Mutation(() => Genre, {
@@ -74,10 +57,7 @@ class GenreResolver {
         @Args() { id }: GenreByIdInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const currentDocument = ctx?.prisma?.genre?.delete({
-            where: { id },
-        });
-        return currentDocument;
+        return this?.genreService?.deleteOne(ctx, id);
     }
 }
 
