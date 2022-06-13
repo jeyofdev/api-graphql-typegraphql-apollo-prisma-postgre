@@ -44,6 +44,7 @@ class MovieResolver {
             rating,
             genreIds,
             actorIds,
+            directorId,
         }: AddMovieInput,
         @Ctx() ctx: { prisma: any }
     ) {
@@ -55,7 +56,8 @@ class MovieResolver {
             duration,
             rating,
             genreIds,
-            actorIds
+            actorIds,
+            directorId
         );
     }
 
@@ -71,6 +73,7 @@ class MovieResolver {
             rating,
             genreIds,
             actorIds,
+            directorId,
         }: UpdateMovieInput,
         @Ctx() ctx: { prisma: any }
     ) {
@@ -83,7 +86,8 @@ class MovieResolver {
             duration,
             rating,
             genreIds,
-            actorIds
+            actorIds,
+            directorId
         );
     }
 

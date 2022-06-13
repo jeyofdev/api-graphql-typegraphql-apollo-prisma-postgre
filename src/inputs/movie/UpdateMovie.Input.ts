@@ -31,6 +31,9 @@ class UpdateMovieInput {
 
     @Field(() => [ID], { nullable: true })
     genreIds?: string[];
+
+    @Field(() => ID)
+    directorId!: string;
 }
 
 export default UpdateMovieInput;

@@ -3,12 +3,19 @@ import { Service } from 'typedi';
 @Service()
 class DirectorService {
     async findAllDirectors(ctx: any) {
-        return ctx?.prisma?.director?.findMany();
+        return ctx?.prisma?.director?.findMany({
+            include: {
+                movies: true,
+            },
+        });
     }
 
     async findOneById(ctx: any, id: string) {
         return ctx?.prisma?.director?.findUnique({
             where: { id },
+            include: {
+                movies: true,
+            },
         });
     }
 
@@ -17,6 +24,9 @@ class DirectorService {
             data: {
                 firstname,
                 lastname,
+            },
+            include: {
+                movies: true,
             },
         });
 
@@ -35,6 +45,9 @@ class DirectorService {
                 firstname,
                 lastname,
             },
+            include: {
+                movies: true,
+            },
         });
         return directorUpdated;
     }
@@ -42,6 +55,9 @@ class DirectorService {
     async deleteOne(ctx: any, id: string) {
         const currentDirector = ctx?.prisma?.director?.delete({
             where: { id },
+            include: {
+                movies: true,
+            },
         });
         return currentDirector;
     }

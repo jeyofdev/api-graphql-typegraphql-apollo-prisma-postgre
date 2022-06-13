@@ -8,6 +8,7 @@ class MovieService {
             include: {
                 actors: true,
                 genres: true,
+                director: true,
             },
         });
     }
@@ -18,6 +19,7 @@ class MovieService {
             include: {
                 actors: true,
                 genres: true,
+                director: true,
             },
         });
     }
@@ -30,7 +32,8 @@ class MovieService {
         duration: number,
         rating: number,
         genreIds: string[],
-        actorIds: string[]
+        actorIds: string[],
+        directorId: string
     ) {
         const newMovie = await ctx?.prisma?.movie?.create({
             data: {
@@ -45,10 +48,14 @@ class MovieService {
                 actors: {
                     connect: generateRelation(actorIds),
                 },
+                director: {
+                    connect: { id: directorId },
+                },
             },
             include: {
                 actors: true,
                 genres: true,
+                director: true,
             },
         });
 
@@ -64,7 +71,8 @@ class MovieService {
         duration?: number,
         rating?: number,
         genreIds?: string[],
-        actorIds?: string[]
+        actorIds?: string[],
+        directorId?: string
     ) {
         const movieUpdated = ctx?.prisma?.movie?.update({
             where: { id },
@@ -80,10 +88,14 @@ class MovieService {
                 actors: {
                     connect: generateRelation(actorIds),
                 },
+                director: {
+                    connect: { id: directorId },
+                },
             },
             include: {
                 actors: true,
                 genres: true,
+                director: true,
             },
         });
         return movieUpdated;
@@ -95,6 +107,7 @@ class MovieService {
             include: {
                 actors: true,
                 genres: true,
+                director: true,
             },
         });
         return currentMovie;

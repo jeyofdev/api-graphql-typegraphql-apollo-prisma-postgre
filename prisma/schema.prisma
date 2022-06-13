@@ -8,14 +8,17 @@ datasource db {
 }
 
 model Movie {
-  id        String   @id @unique @default(uuid()) @db.Uuid
-  title     String   @db.VarChar(255)
-  synopsys  String   @db.Text
-  year      Int      @db.Integer
-  duration  Int      @db.Integer
-  rating    Float    @db.DoublePrecision
-  actors    Actor[]
-  genres    Genre[]
+  id          String   @id @unique @default(uuid()) @db.Uuid
+  title       String   @db.VarChar(255)
+  synopsys    String   @db.Text
+  year        Int      @db.Integer
+  duration    Int      @db.Integer
+  rating      Float    @db.DoublePrecision
+  actors      Actor[]
+  genres      Genre[]
+  director    Director @relation("moviesByDirector", fields: [directorID], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  directorID  String @db.Uuid
+
 }
 
 model Actor {
@@ -29,6 +32,8 @@ model Director {
   id        String   @id @unique @default(uuid()) @db.Uuid
   firstname String   @db.VarChar(100)
   lastname  String   @db.VarChar(100)
+  movies    Movie[]  @relation("moviesByDirector")
+
 }
 
 model Genre {

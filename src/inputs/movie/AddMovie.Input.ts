@@ -22,6 +22,9 @@ class AddMovieInput {
 
     @Field(() => [ID])
     genreIds!: string[];
+
+    @Field(() => ID)
+    directorId!: string;
 }
 
 export default AddMovieInput;

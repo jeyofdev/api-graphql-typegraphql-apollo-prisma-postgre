@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 import { Field, Float, ID, Int, ObjectType } from 'type-graphql';
 import Actor from './Actor.model';
+import Director from './Director.model';
 import Genre from './Genre.model';
 
 @ObjectType({ description: 'Model for the movies' })
@@ -28,6 +29,9 @@ class Movie {
 
     @Field(() => [Genre], { description: 'Genres of the movie' })
     genres!: Genre[];
+
+    @Field(() => Director)
+    director!: Director;
 }
 
 export default Movie;
