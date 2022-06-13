@@ -1,22 +1,22 @@
 import { Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Service } from 'typedi';
 import Movie from '../models/Movie.model';
 import AddMovieInput from '../inputs/movie/AddMovie.Input';
 import MovieByIdInput from '../inputs/movie/MovieById.Input';
 import UpdateMovieInput from '../inputs/movie/UpdateMovie.Input';
+import MovieService from '../services/Movie.service';
 
+@Service()
 @Resolver(Movie)
 class MovieResolver {
+    constructor(private readonly movieService: MovieService) {}
+
     @Query(() => [Movie], {
         nullable: true,
         description: 'Get all movies',
     })
     async movies(@Ctx() ctx: { prisma: any }) {
-        return ctx?.prisma?.movie?.findMany({
-            include: {
-                actors: true,
-                genres: true,
-            },
-        });
+        return this?.movieService?.findAllMovies(ctx);
     }
 
     @Query(() => Movie, {
@@ -27,13 +27,7 @@ class MovieResolver {
         @Args() { id }: MovieByIdInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        return ctx?.prisma?.movie?.findUnique({
-            where: { id },
-            include: {
-                actors: true,
-                genres: true,
-            },
-        });
+        return this?.movieService?.findOneById(ctx, id);
     }
 
     @Mutation(() => Movie, {
@@ -53,35 +47,16 @@ class MovieResolver {
         }: AddMovieInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const genresList: { id: string }[] = genreIds
-            ? genreIds?.map((id) => ({ id }))
-            : [];
-
-        const actorsList: { id: string }[] = actorIds
-            ? actorIds.map((id) => ({ id }))
-            : [];
-
-        const newMovie = await ctx?.prisma?.movie?.create({
-            data: {
-                title,
-                synopsys,
-                year,
-                duration,
-                rating,
-                genres: {
-                    connect: genresList,
-                },
-                actors: {
-                    connect: actorsList,
-                },
-            },
-            include: {
-                actors: true,
-                genres: true,
-            },
-        });
-
-        return newMovie;
+        return this?.movieService?.save(
+            ctx,
+            title,
+            synopsys,
+            year,
+            duration,
+            rating,
+            genreIds,
+            actorIds
+        );
     }
 
     @Mutation(() => Movie)
@@ -99,35 +74,17 @@ class MovieResolver {
         }: UpdateMovieInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const genresList: { id: string }[] = genreIds
-            ? genreIds?.map((genreId) => ({ id: genreId }))
-            : [];
-
-        const actorsList: { id: string }[] = actorIds
-            ? actorIds.map((actorId) => ({ id: actorId }))
-            : [];
-
-        const movieUpdated = ctx?.prisma?.movie?.update({
-            where: { id },
-            data: {
-                title,
-                synopsys,
-                year,
-                duration,
-                rating,
-                genres: {
-                    connect: genresList,
-                },
-                actors: {
-                    connect: actorsList,
-                },
-            },
-            include: {
-                actors: true,
-                genres: true,
-            },
-        });
-        return movieUpdated;
+        return this?.movieService?.updateOne(
+            ctx,
+            id,
+            title,
+            synopsys,
+            year,
+            duration,
+            rating,
+            genreIds,
+            actorIds
+        );
     }
 
     @Mutation(() => Movie, {
@@ -138,14 +95,7 @@ class MovieResolver {
         @Args() { id }: MovieByIdInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const currentMovie = ctx?.prisma?.movie?.delete({
-            where: { id },
-            include: {
-                actors: true,
-                genres: true,
-            },
-        });
-        return currentMovie;
+        return this?.movieService?.deleteOne(ctx, id);
     }
 }
 

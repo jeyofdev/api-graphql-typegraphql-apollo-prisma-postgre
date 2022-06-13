@@ -6,6 +6,7 @@ import { buildSchemaSync } from 'type-graphql';
 import * as Express from 'express';
 import { createServer } from 'http';
 import * as dotenv from 'dotenv';
+import { Container } from 'typedi';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ const LaunchServer = async () => {
 
     const schema = buildSchemaSync({
         resolvers: [`${__dirname}/**/*.resolver.{ts,js}`],
+        container: Container,
     });
 
     // Init apollo server

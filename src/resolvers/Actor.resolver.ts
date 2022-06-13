@@ -1,21 +1,22 @@
 import { Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Service } from 'typedi';
+import ActorService from '../services/Actor.service';
 import Actor from '../models/Actor.model';
 import AddActorInput from '../inputs/actor/AddActor.Input';
 import ActorByIdInput from '../inputs/actor/ActorById.Input';
 import UpdateActorInput from '../inputs/actor/UpdateActor.Input';
 
+@Service()
 @Resolver(Actor)
 class ActorResolver {
+    constructor(private readonly actorService: ActorService) {}
+
     @Query(() => [Actor], {
         nullable: true,
         description: 'Get all actors',
     })
     async actors(@Ctx() ctx: { prisma: any }) {
-        return ctx?.prisma?.actor?.findMany({
-            include: {
-                movies: true,
-            },
-        });
+        return this?.actorService?.findAllActors(ctx);
     }
 
     @Query(() => Actor, {
@@ -26,12 +27,7 @@ class ActorResolver {
         @Args() { id }: ActorByIdInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        return ctx?.prisma?.actor?.findUnique({
-            where: { id },
-            include: {
-                movies: true,
-            },
-        });
+        return this?.actorService?.findOneById(ctx, id);
     }
 
     @Mutation(() => Actor, {
@@ -42,17 +38,7 @@ class ActorResolver {
         @Args() { firstname, lastname }: AddActorInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const newActor = await ctx?.prisma?.actor?.create({
-            data: {
-                firstname,
-                lastname,
-            },
-            include: {
-                movies: true,
-            },
-        });
-
-        return newActor;
+        return this?.actorService?.save(ctx, firstname, lastname);
     }
 
     @Mutation(() => Actor)
@@ -60,17 +46,7 @@ class ActorResolver {
         @Args() { id, firstname, lastname }: UpdateActorInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const commentUpdated = ctx?.prisma?.actor?.update({
-            where: { id },
-            data: {
-                firstname,
-                lastname,
-            },
-            include: {
-                movies: true,
-            },
-        });
-        return commentUpdated;
+        return this?.actorService?.updateOne(ctx, id, firstname, lastname);
     }
 
     @Mutation(() => Actor, {
@@ -81,15 +57,7 @@ class ActorResolver {
         @Args() { id }: ActorByIdInput,
         @Ctx() ctx: { prisma: any }
     ) {
-        const currentDocument = ctx?.prisma?.actor?.delete({
-            where: {
-                id,
-                include: {
-                    movies: true,
-                },
-            },
-        });
-        return currentDocument;
+        return this?.actorService?.deleteOne(ctx, id);
     }
 }
 
